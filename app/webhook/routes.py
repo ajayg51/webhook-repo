@@ -1,5 +1,6 @@
 from flask import Blueprint, json, request, render_template
 import sched, time, datetime, git, subprocess, requests, os, shutil
+import pytz
 
 
 from app.extensions import *
@@ -99,7 +100,15 @@ def get_commit_info():
 
         commitAuthor = LOCAL_REPO_LAST_HEAD_COMMIT_ID.author.name
         commitMessage = LOCAL_REPO_LAST_HEAD_COMMIT_ID.message
+
         timestamp = LOCAL_REPO_LAST_HEAD_COMMIT_ID.authored_datetime
+        print("timestamp")
+        print(timestamp)
+
+        timestamp =  datetime.datetime.strptime(str(timestamp), '%Y-%m-%d %H:%M:%S%z')
+        timestamp = timestamp.strftime('%d %B %Y %I:%M:%S %p') 
+    
+        
         fromBranch = "N/A as Push event"
         toBranch = "N/A as Push event"
 
@@ -113,7 +122,7 @@ def get_commit_info():
                         commitBranch = branch_name
 
         if LOCAL_REPO_LAST_HEAD_COMMIT_ID != remoteRepoHeadCommit :
-            eventType = "Push"
+            eventType = "PUSH git action"
             print("Push git action found")
 
         print("local repo commit")
@@ -167,7 +176,7 @@ def print_git_changes(diff):
 
 # push git action
 
-@webhook.route('/push', methods=["GET"])
+@webhook.route('/detect-push-event', methods=["GET"])
 def get_listen_for_changes_on_action_repo():
     
     info = get_commit_info()
@@ -178,7 +187,7 @@ def get_listen_for_changes_on_action_repo():
 
 
 # detect PR
-@webhook.route('/detect-pull-request', methods=['GET','POST'])
+@webhook.route('/detect-pull-request-event', methods=['GET','POST'])
 def detect_pull_requests():
 
     commitId = LOCAL_ACTION_REPO.head.commit
@@ -210,6 +219,10 @@ def detect_pull_requests():
             commitMsg = latest_PR["title"]
             author = latest_PR["user"]["login"]
             timestamp = latest_PR["created_at"]
+            timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
+            timestamp = timestamp.strftime('%d %B %Y %I %M %S %p')
+
+
             fromBranch = latest_PR["head"]["ref"]
             toBranch = latest_PR["base"]["ref"]
 
@@ -233,7 +246,7 @@ def detect_pull_requests():
                 "commitMessage" : commitMsg ,
                 "fromBranch" : fromBranch,
                 "toBranch" : toBranch,
-                "eventType" : "PULL-REQUEST",
+                "eventType" : "PULL-REQUEST git action",
                 "timestamp" : timestamp
             }
 
@@ -248,47 +261,72 @@ def detect_pull_requests():
 
     except Exception as e:
         print(f"Request Exception: {e}")
-        return "Exception : "
+        return "Exception : check logs "
     return "No info found"
 
 
-@webhook.route('/get-merged-branch-info', methods=['GET', 'POST'])
+@webhook.route('/detect-merge-event', methods=['GET', 'POST'])
 def get_merged_branch_info():
     try:
-        destinationDir = "./merged_pr/repo"
-        if(os.path.exists(destinationDir)):
-            shutil.rmtree(destinationDir)
+        # destinationDir = "./merged_pr/repo"
+        # if(os.path.exists(destinationDir)):
+        #     shutil.rmtree(destinationDir)
 
-        remoteRepo = git.Repo.clone_from(REPO_URL, destinationDir, depth=1)
-        headCommit = remoteRepo.head.commit
-        print("head")
-        print(headCommit)
+        # remoteRepo = git.Repo.clone_from(REPO_URL, destinationDir, depth=1)
+        # headCommit = remoteRepo.head.commit
+        # print("head")
+        # print(headCommit)
 
         
+        LOCAL_REPO_LAST_HEAD_COMMIT_ID = LOCAL_ACTION_REPO.head.commit
+        LOCAL_REPO_LAST_HEAD_COMMIT_ID_HASH = LOCAL_ACTION_REPO.head.object.hexsha
+
         
-        commitAuthor = headCommit.author.name
-        commitMessage = headCommit.message
-        timestamp = headCommit.authored_datetime
+        commitAuthor = LOCAL_REPO_LAST_HEAD_COMMIT_ID.author.name
+        commitMessage = LOCAL_REPO_LAST_HEAD_COMMIT_ID.message
+        timestamp = LOCAL_REPO_LAST_HEAD_COMMIT_ID.authored_datetime
+
+        timestamp = datetime.datetime.strptime(str(timestamp), '%Y-%m-%d %H:%M:%S%z')
+        timestamp = timestamp.strftime('%d %B %Y %I %M %S %p')
+
         commitBranch = "N/A"
-        fromBranch = "N/A"
-        toBranch = "N/A"
-        eventType = "Merge"
+        fromBranch = "N/A as merge request"
+        toBranch = "N/A as merge request"
+        eventType = "MERGE git action"
+        
 
-        if len(headCommit.parents) > 1:
-                print(headCommit)
-                commitAuthor = headCommit.author.name
-                commitMessage = headCommit.message
-                timestamp = headCommit.authored_datetime
-                for ref in LOCAL_ACTION_REPO.references:
-                    if isinstance(ref, git.Head): 
-                        branch_name = ref.name
-                        for b_commit in LOCAL_ACTION_REPO.iter_commits(branch_name):
-                            if b_commit == headCommit:
-                                print("branch - name")
-                                print(branch_name)
-                                commitBranch = branch_name
+        if len(LOCAL_REPO_LAST_HEAD_COMMIT_ID.parents) > 1:
+                print("Merged found")
+                # commitAuthor = LOCAL_REPO_LAST_HEAD_COMMIT_ID.author.name
+                # commitMessage = headCommit.message
+                # timestamp = headCommit.authored_datetime
+        for ref in LOCAL_ACTION_REPO.references:
+            if isinstance(ref, git.Head): 
+                branch_name = ref.name
+                for b_commit in LOCAL_ACTION_REPO.iter_commits(branch_name):
+                    if b_commit == LOCAL_REPO_LAST_HEAD_COMMIT_ID:
+                        print("branch - name")
+                        print(branch_name)
+                        commitBranch = branch_name
                 
 
+        print("local commit id")
+        print(LOCAL_REPO_LAST_HEAD_COMMIT_ID)
+        print("commitBranch")
+        print(commitBranch)
+        print("commitMessage")
+        print(commitMessage)
+
+        print("commitAuthor")
+        print(commitAuthor)
+        print("fromBranch")
+        print(fromBranch)
+        print("toBranch")
+        print(toBranch)
+        print("timestamp")
+        print(timestamp)
+        print("eventType")
+        print(eventType)
         
         infoModel = {
             "commitBranch" : commitBranch,
@@ -361,23 +399,12 @@ def get_data():
     fromBranch = data['fromBranch']
     toBranch = data['toBranch']
     timestamp = data['timestamp']
-    timestamp = datetime.datetime.strptime(str(timestamp), "%Y-%m-%d %H:%M:%S")  
-    timestamp = timestamp.strftime("%A %B %d %Y %H:%M:%S")
+    # timestamp =  datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S%z')
+    # delhi_timezone = pytz.timezone('Asia/Kolkata')
     
-    timestampList = timestamp.split()
-    print("timestamp list")
-    print(timestampList)
-    print("reversed timestamp list")
-    print(timestampList[-1])
-    hour = int(timestampList[-1].split(":")[0])
-    print(hour)
-    if(hour > 12):
-        hour -= 12
-        print("PM")
-        timestamp += " PM" 
-    else:
-        print("AM")
-        timestamp += " AM" 
+    # timestamp = timestamp.replace(tzinfo=pytz.utc).astimezone(delhi_timezone)
+    # timestamp = timestamp.strftime('%d %B %Y %I:%M:%S %p') 
+    
 
     print('eventType')
     print(eventType)

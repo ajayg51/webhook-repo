@@ -69,11 +69,14 @@
     <!-- script at bottom of body : ALWAYS -->
     <script>
 
-        // setInterval(function () {
-        //     document.getElementById('prev-fetched-timestamp').innerText
-        //         = new Date().toLocaleTimeString([], {hour12: true});
-        //     callApi()
-        // }, 2000);
+        setInterval(function () {
+            document.getElementById('prev-fetched-timestamp').innerText
+                = new Date().toLocaleTimeString([],
+                  {hour12: true});
+            
+                  callApi()
+        
+                }, 2000);
 
         function callApi() {
 

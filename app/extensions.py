@@ -45,13 +45,20 @@ post_schema = {
 
 def parseInfo(infoModel):
     
-    latestCommit = infoModel["head_commit"]
+    # infoModel = {
+    #         "commitMessage": commitMessage,
+    #         "commitAuthor": commitAuthor,
+    #         "commitDateTime": commitDateTime,
+    #         "eventType" : eventType,
+    #     }
+
+    commitBranch = infoModel["commitBranch"] 
+    authorName = infoModel["commitAuthor"]
+    commitMsg = infoModel["commitMessage"]
+    fromBranch = infoModel["fromBranch"]
+    toBranch = infoModel["toBranch"]
     eventType = infoModel["eventType"]
-    
-    authorName = latestCommit["author"]["name"]
-    fromBranch = ""
-    toBranch = infoModel["ref"]
-    timeStamp = latestCommit["timestamp"]
+    timeStamp = infoModel["timestamp"]
 
     print("eventType : ")
     print(eventType)
@@ -59,10 +66,12 @@ def parseInfo(infoModel):
     print("author : ")
     print(authorName)
     datum = {
-        "eventType" : eventType,
+        "commitBranch" : commitBranch,
         "author":authorName,
+        "commitMsg":commitMsg,
         "fromBranch":fromBranch,
         "toBranch" : toBranch,
+        "eventType" : eventType,
         "timestamp" : timeStamp,
     }
 

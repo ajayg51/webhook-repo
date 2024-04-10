@@ -30,28 +30,44 @@ p {
         background-color: blanchedalmond;
     }
 
+    .commit-branch-div {
+        height: 20px;
+        padding: 1rem;
+        margin: 1rem;
+    }
+    .commit-msg-div {
+        height: 20px;
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
     .event-div {
         height: 20px;
         padding: 1rem;
+        margin: 1rem;
     }
 
     .author-div {
         height: 20px;
         padding: 1rem;
+        margin: 1rem;
     }
 
     .from-branch-div {
         height: 20px;
         padding: 1rem;
+        margin: 1rem;
     }
 
     .to-branch-div {
         height: 20px;
         padding: 1rem;
+        margin: 1rem;
     }
 
     .timestamp-div {
         height: 20px;
         padding: 1rem;
+        margin: 1rem;
     }
 }

@@ -21,13 +21,22 @@
         </div>
 
         <div class="block">
-            <div class="event-div">
-                <p>Event Type : <span id="eventType"></span> </p>
+            <div class="commit-branch-div">
+                <p>Commit Branch : <span id="commitBranch"></span> </p>
+            </div>
+
+            <div class="commit-msg-div">
+                <p>Commit Message : <span id="commitMessage"></span> </p>
             </div>
 
             <div class="author-div">
                 <p>Author : <span id="author"></span></p>
             </div>
+
+            <div class="event-div">
+                <p>Event Type : <span id="eventType"></span> </p>
+            </div>
+
 
             <div class="from-branch-div">
                 <p>From Branch : <span id="fromBranch"></span></p>
@@ -80,40 +89,64 @@
                     .then(data => {
                         console.log('index.html : data ');
                         console.log(data)
+                        //     "commitAuthor": "Ajay Kumar Gond",
+                        // #   "commitBranch": "origin/main",
+                        // #   "commitMessage": "Merge pull request #4 from ajayg51/pr_check_branch\n\nM run.py at 4:48",
+                        // #   "eventType": "Merge",
+                        // #   "fromBranch": "N/A",
+                        // #   "timestamp": "Wed, 10 Apr 2024 11:19:56 GMT",
+                        // #   "toBranch": "N/A"
+                        commitBranch = data.commitBranch
+                        commitMessage = data.commitMessage
+                        commitAuthor = data.commitAuthor
                         eventType = data.eventType
-                        author = data.author
                         fromBranch = data.fromBranch
                         toBranch = data.toBranch
                         timestamp = data.timestamp
-                        if ((eventType != null || eventType != undefined ) && eventType != "") {
+                        if ((commitBranch != null || commitBranch != undefined) 
+                            && commitBranch != "") {
 
-                            document.getElementById("eventType").innerText = eventType
-                        }else{
-                            document.getElementById("eventType").innerText = "N/A"
+                            document.getElementById("commitBranch").innerText = commitBranch
+                        } else {
+                            document.getElementById("commitBranch").innerText = "N/A"
                         }
-                        if ((author != null || author != undefined) && author != "") {
+                        if ((commitMessage != null || commitMessage != undefined) 
+                            && commitMessage != "") {
 
-                            document.getElementById("author").innerText = author
-                        }else{
+                            document.getElementById("commitMessage").innerText = commitMessage
+                        } else {
+                            document.getElementById("commitMessage").innerText = "N/A"
+                        }
+                        if ((commitAuthor != null || commitAuthor != undefined) 
+                            && commitAuthor != "") {
+
+                            document.getElementById("author").innerText = commitAuthor
+                        } else {
                             document.getElementById("author").innerText = "N/A"
                         }
+
+                        if ((eventType != null || eventType != undefined) && eventType != "") {
+
+                            document.getElementById("eventType").innerText = eventType
+                        } else {
+                            document.getElementById("eventType").innerText = "N/A"
+                        }
+
                         if ((fromBranch != null || fromBranch != undefined) && fromBranch != "") {
 
                             document.getElementById("fromBranch").innerText = fromBranch
-                        }else{
+                        } else {
                             document.getElementById("fromBranch").innerText = "N/A"
                         }
                         if ((toBranch != null || toBranch != undefined) && toBranch != "") {
-
-
                             document.getElementById("toBranch").innerText = toBranch
-                        }else{
+                        } else {
                             document.getElementById("toBranch").innerText = "N/A"
                         }
                         if ((timestamp != null || timestamp != undefined) && timestamp != "") {
 
                             document.getElementById("timestamp").innerText = timestamp
-                        }else{
+                        } else {
                             document.getElementById("timestamp").innerText = "N/A"
                         }
 

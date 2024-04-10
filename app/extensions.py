@@ -8,8 +8,10 @@ uri = "mongodb+srv://ajaygug18cs:lKxlCW5spkSSYATo@ajayg51.wac04mp.mongodb.net/?r
 
 
 db_data = {
+    "commitAuthor": "",
+    "commitBranch":"",
+    "commitMessage":"",
     "eventType" : "",
-    "author":"",
     "fromBranch":"",
     "toBranch":"",
     "timestamp":""
@@ -20,11 +22,30 @@ db_data = {
 
 
 post_schema = {
+#     "commitAuthor": "Ajay Kumar Gond",
+#   "commitBranch": "origin/main",
+#   "commitMessage": "Merge pull request #4 from ajayg51/pr_check_branch\n\nM run.py at 4:48",
+#   "eventType": "Merge",
+#   "fromBranch": "N/A",
+#   "timestamp": "Wed, 10 Apr 2024 11:19:56 GMT",
+#   "toBranch": "N/A"
+    'commitAuthor':{
+        'type' : 'string',
+        'required' : True,
+    },
+    'commitBranch':{
+        'type' : 'string',
+        'required' : True,
+    },
+    'commitMessage':{
+        'type' : 'string',
+        'required' : True,
+    },
     'eventType' : {
         'type' : 'string',
         'required' : True,
     },
-    'author' : {
+    'commitAuthor' : {
         'type' : 'string',
         'required' : True,
     },
@@ -67,8 +88,8 @@ def parseInfo(infoModel):
     print(authorName)
     datum = {
         "commitBranch" : commitBranch,
-        "author":authorName,
-        "commitMsg":commitMsg,
+        "commitAuthor":authorName,
+        "commitMessage":commitMsg,
         "fromBranch":fromBranch,
         "toBranch" : toBranch,
         "eventType" : eventType,
@@ -128,12 +149,17 @@ def get_atlas_data():
         data.reverse()
 
         return data[0]
+
+        # return cursor[-1]
         
         client.close()
 
     except Exception as e:
+        
         print("Error : Exception")
         print(e)    
+        return("Exception : check logs")
+    return "something went wrong!"
 
 
    

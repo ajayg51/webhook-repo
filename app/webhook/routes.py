@@ -244,7 +244,7 @@ def get_webhook_repo_info():
 #             author = latest_PR["user"]["login"]
 #             timestamp = latest_PR["created_at"]
 #             timestamp = datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%SZ')
-#             timestamp = timestamp.strftime('%d %B %Y %I %M %S %p')
+#             timestamp = timestamp.strftime('%d %B %Y %I:%M:%S %p')
 
 
 #             fromBranch = latest_PR["head"]["ref"]
@@ -292,26 +292,29 @@ def get_webhook_repo_info():
 # @webhook.route('/detect-merge-event', methods=['GET', 'POST'])
 # def get_merged_branch_info():
 #     try:
-#         # destinationDir = "./merged_pr/repo"
-#         # if(os.path.exists(destinationDir)):
-#         #     shutil.rmtree(destinationDir)
+#         destinationDir = "./merged_pr/repo"
+#         if(os.path.exists(destinationDir)):
+#             shutil.rmtree(destinationDir)
 
-#         # remoteRepo = git.Repo.clone_from(REPO_URL, destinationDir, depth=1)
-#         # headCommit = remoteRepo.head.commit
-#         # print("head")
-#         # print(headCommit)
+#         remoteRepo = git.Repo.clone_from(REPO_URL, destinationDir, depth=1)
+#         remoteHeadCommit = remoteRepo.head.commit
+#         print("remote - head")
+#         print(remoteHeadCommit)
+
+        # print("commitMessage")
+        # print(remoteHeadCommit.message)
 
         
 #         LOCAL_REPO_LAST_HEAD_COMMIT_ID = LOCAL_ACTION_REPO.head.commit
 #         LOCAL_REPO_LAST_HEAD_COMMIT_ID_HASH = LOCAL_ACTION_REPO.head.object.hexsha
 
         
-#         commitAuthor = LOCAL_REPO_LAST_HEAD_COMMIT_ID.author.name
-#         commitMessage = LOCAL_REPO_LAST_HEAD_COMMIT_ID.message
-#         timestamp = LOCAL_REPO_LAST_HEAD_COMMIT_ID.authored_datetime
+#         commitAuthor = remoteHeadCommit.author.name
+#         commitMessage = remoteHeadCommit.message
+#         timestamp = remoteHeadCommit.authored_datetime
 
 #         timestamp = datetime.datetime.strptime(str(timestamp), '%Y-%m-%d %H:%M:%S%z')
-#         timestamp = timestamp.strftime('%d %B %Y %I %M %S %p')
+#         timestamp = timestamp.strftime('%d %B %Y %I:%M:%S %p')
 
 #         commitBranch = "N/A"
 #         fromBranch = "N/A as merge request"

@@ -70,4 +70,32 @@ p {
         padding: 1rem;
         margin: 1rem;
     }
+
+    
+
+}
+
+.btn-col{
+    margin: 1rem;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.btn{
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 20px;
+}
+
+.push-info{
+    display: none;
+}
+
+.pr-info{
+    display: none;
+}
+
+.merge-info{
+    display: none;
 }

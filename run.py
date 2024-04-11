@@ -6,6 +6,7 @@ from app import create_app
 # app = create_app()
 
 
+
 app = Flask(__name__,  template_folder='template')
 
 @app.route('/', methods=["GET"])
